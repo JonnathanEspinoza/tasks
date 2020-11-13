@@ -1,10 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+
+import Tasks from '../components/Tasks';
 
 class App extends Component {
 
     state = {
         title: '',
-        description: ''
+        description: '',
+        tasks: []
     }
 
     addTask = e => {
@@ -20,17 +23,41 @@ class App extends Component {
             .then(data => {
                 console.log(data);
                 // Materialize
-                M.toast({html: 'Task Saved'});
-                this.setState({title: '', description: ''});
+                M.toast({ html: 'Task Saved' });
+                this.setState({ title: '', description: '' });
+                //this.fetchTasks();
+                this.axiosTasks();
             })
             .then(err => console.log(err));
 
         e.preventDefault();
     }
 
+    componentDidMount() {
+        //this.fetchTasks();
+        this.axiosTasks();
+    }
+
+    fetchTasks = () => {
+        fetch('/api/tasks')
+            .then(res => res.json())
+            .then(data => {
+                this.setState({ tasks: data });
+            });
+    }
+
+    axiosTasks = async () => {
+        try {
+            const res = await axios('/api/tasks');
+            this.setState({ tasks: res.data });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     handleChange = e => {
         //console.log(e.target.name, e.target.value);
-        const { name, value} = e.target;
+        const { name, value } = e.target;
         this.setState({
             [name]: value
         });
@@ -54,12 +81,12 @@ class App extends Component {
                                     <form onSubmit={this.addTask}>
                                         <div className="row">
                                             <div className="input-field col s12">
-                                                <input type="text" name="title" onChange={this.handleChange} placeholder="Task Title" value={this.state.title}/>
+                                                <input type="text" name="title" onChange={this.handleChange} placeholder="Task Title" value={this.state.title} />
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="input-field col s12">
-                                                <textarea name="description" onChange={this.handleChange}  placeholder="Task Description" className="materialize-textarea" value={this.state.description}></textarea>
+                                                <textarea name="description" onChange={this.handleChange} placeholder="Task Description" className="materialize-textarea" value={this.state.description}></textarea>
                                             </div>
                                         </div>
                                         <button type="submit" className="btn teal darken-3">Send</button>
@@ -67,7 +94,9 @@ class App extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="col s7"></div>
+                        <div className="col s7">
+                            <Tasks tasks={this.state.tasks} />
+                        </div>
                     </div>
                 </div>
             </div>
