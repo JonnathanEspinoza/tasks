@@ -10,6 +10,7 @@ class App extends Component {
         tasks: []
     }
 
+    // CREAR/AGREGAR UNA TAREA
     addTask = e => {
         fetch('/api/tasks', {
             method: 'POST',
@@ -33,11 +34,13 @@ class App extends Component {
         e.preventDefault();
     }
 
+    // INICILIZADOR
     componentDidMount() {
         //this.fetchTasks();
         this.axiosTasks();
     }
 
+    // GET TASK WHIT FETCH
     fetchTasks = () => {
         fetch('/api/tasks')
             .then(res => res.json())
@@ -46,6 +49,7 @@ class App extends Component {
             });
     }
 
+    // GET TASK WHIT AXIOS
     axiosTasks = async () => {
         try {
             const res = await axios('/api/tasks');
@@ -55,6 +59,7 @@ class App extends Component {
         }
     }
 
+    // CHANGE THE STATE
     handleChange = e => {
         //console.log(e.target.name, e.target.value);
         const { name, value } = e.target;
@@ -95,7 +100,7 @@ class App extends Component {
                             </div>
                         </div>
                         <div className="col s7">
-                            <Tasks tasks={this.state.tasks} />
+                            <Tasks tasks={this.state.tasks} axiosTasks={this.axiosTasks}/>
                         </div>
                     </div>
                 </div>

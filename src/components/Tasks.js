@@ -3,8 +3,40 @@ import PropTypes from 'prop-types';
 
 class Tasks extends Component {
 
-    deleteTask = id => {
-        console.log('delete this task', id);
+    // DELETE TASK WHIT AXIOS
+    deleteTaskAxios = async (id) => {
+        if (confirm('Are you sure you want to delete if?')) {
+            try {
+                const res = await axios({
+                    method: 'delete',
+                    url: `/api/tasks/${id}`,
+                });
+                console.log(res.data);
+                M.toast({ html: 'Task Delete' });
+                this.props.axiosTasks();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+    // DELETE TASK WHIT FETCH
+    deleteTaskFetch = id => {
+        if (confirm('Are you sure you want to delete if?')) {
+            fetch(`/api/tasks/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    M.toast({ html: 'Task Delete' });
+                    this.props.axiosTasks();
+                })
+
+        }
     }
 
     render() {
@@ -27,7 +59,7 @@ class Tasks extends Component {
                                         <button className="teal darken-3" onClick={this.deleteTask}>
                                             <i className="material-icons">edit</i>
                                         </button>
-                                        <button className="teal darken-3" style={btnDelete} onClick={() => this.deleteTask(task._id)}>
+                                        <button className="teal darken-3" style={btnDelete} onClick={() => this.deleteTaskAxios(task._id)}>
                                             <i className="material-icons">delete</i>
                                         </button>
                                     </td>
