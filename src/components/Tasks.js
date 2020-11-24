@@ -13,6 +13,7 @@ class Tasks extends Component {
                 });
                 console.log(res.data);
                 M.toast({ html: 'Task Delete' });
+                this.props.handleTalkBlank();
                 this.props.axiosTasks();
             } catch (error) {
                 console.log(error);
@@ -33,9 +34,19 @@ class Tasks extends Component {
                 .then(data => {
                     console.log(data);
                     M.toast({ html: 'Task Delete' });
+                    this.props.handleTalkBlank();
                     this.props.axiosTasks();
                 })
+        }
+    }
 
+    // EDITAR TASK
+    editTask = async(id) => {
+        try {
+            const res = await axios(`/api/tasks/${id}`);
+            this.props.handleTaskEdit(res.data.title, res.data.description, res.data._id);
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -56,7 +67,7 @@ class Tasks extends Component {
                                     <td>{task.title}</td>
                                     <td>{task.description}</td>
                                     <td>
-                                        <button className="teal darken-3" onClick={this.deleteTask}>
+                                        <button className="teal darken-3" onClick={() => this.editTask(task._id)}>
                                             <i className="material-icons">edit</i>
                                         </button>
                                         <button className="teal darken-3" style={btnDelete} onClick={() => this.deleteTaskAxios(task._id)}>

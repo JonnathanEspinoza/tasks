@@ -1,37 +1,15 @@
 import React, { Component } from 'react';
 
 import Tasks from '../components/Tasks';
+import TaskForm from '../components/TaskForm';
 
 class App extends Component {
 
     state = {
         title: '',
         description: '',
-        tasks: []
-    }
-
-    // CREAR/AGREGAR UNA TAREA
-    addTask = e => {
-        fetch('/api/tasks', {
-            method: 'POST',
-            body: JSON.stringify(this.state),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                // Materialize
-                M.toast({ html: 'Task Saved' });
-                this.setState({ title: '', description: '' });
-                //this.fetchTasks();
-                this.axiosTasks();
-            })
-            .then(err => console.log(err));
-
-        e.preventDefault();
+        tasks: [],
+        _id: ''
     }
 
     // INICILIZADOR
@@ -59,10 +37,15 @@ class App extends Component {
         }
     }
 
-    // CHANGE THE STATE
-    handleChange = e => {
-        //console.log(e.target.name, e.target.value);
-        const { name, value } = e.target;
+    handleTaskEdit = (title, description, id) => {
+        this.setState({ title, description, _id: id });
+    }
+
+    handleTalkBlank = () => {
+        this.setState({ title: '', description: '', _id: '' });
+    }
+
+    handleTaskChange = (name, value) => {
         this.setState({
             [name]: value
         });
@@ -81,26 +64,22 @@ class App extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col s5">
-                            <div className="card">
-                                <div className="card-content">
-                                    <form onSubmit={this.addTask}>
-                                        <div className="row">
-                                            <div className="input-field col s12">
-                                                <input type="text" name="title" onChange={this.handleChange} placeholder="Task Title" value={this.state.title} />
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="input-field col s12">
-                                                <textarea name="description" onChange={this.handleChange} placeholder="Task Description" className="materialize-textarea" value={this.state.description}></textarea>
-                                            </div>
-                                        </div>
-                                        <button type="submit" className="btn teal darken-3">Send</button>
-                                    </form>
-                                </div>
-                            </div>
+                            <TaskForm
+                                title={this.state.title}
+                                description={this.state.description}
+                                id={this.state._id}
+                                handleTaskChange={this.handleTaskChange}
+                                axiosTasks={this.axiosTasks}
+                                handleTalkBlank={this.handleTalkBlank}
+                            />
                         </div>
                         <div className="col s7">
-                            <Tasks tasks={this.state.tasks} axiosTasks={this.axiosTasks}/>
+                            <Tasks 
+                                tasks={this.state.tasks} 
+                                axiosTasks={this.axiosTasks}
+                                handleTaskEdit={this.handleTaskEdit}
+                                handleTalkBlank={this.handleTalkBlank}
+                            />
                         </div>
                     </div>
                 </div>
